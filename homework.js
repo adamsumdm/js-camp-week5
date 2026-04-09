@@ -107,6 +107,8 @@ function getAllCategories(products) {
  */
 function calculateCartOriginalTotal(carts) {
   // 請實作此函式
+  const totalOriPrice = carts.reduce((accumulator,orderItem) => accumulator + (orderItem.product.origin_price * orderItem.quantity),0);
+  return totalOriPrice;
 }
 
 /**
@@ -116,6 +118,8 @@ function calculateCartOriginalTotal(carts) {
  */
 function calculateCartTotal(carts) {
   // 請實作此函式
+  const totalPrice = carts.reduce((accumulator,orderItem) => accumulator + (orderItem.product.price * orderItem.quantity),0);
+  return totalPrice;
 }
 
 /**
@@ -125,6 +129,8 @@ function calculateCartTotal(carts) {
  */
 function calculateSavings(carts) {
   // 請實作此函式
+  const discount = calculateCartOriginalTotal(carts) - calculateCartTotal(carts);
+  return discount;
 }
 
 /**
@@ -134,6 +140,7 @@ function calculateSavings(carts) {
  */
 function calculateCartItemCount(carts) {
   // 請實作此函式
+  return carts.reduce((acc, orderItem) => acc + orderItem.quantity,0);
 }
 
 /**
@@ -144,6 +151,9 @@ function calculateCartItemCount(carts) {
  */
 function isProductInCart(carts, productId) {
   // 請實作此函式
+  const matchItem = carts.find(orderItem => orderItem.product.id === productId);
+  const isPresent = obj => obj != null && obj != undefined;
+  return isPresent(matchItem);
 }
 
 // ========================================
