@@ -13,7 +13,7 @@ const products = [
   { id: 'prod-5', title: '運動外套', category: '衣服', origin_price: 2000, price: 1599, images: 'https://example.com/j1.jpg' }
 ];
 
-// 購物車資料
+// 購物車資料(產品與數量清單)
 const carts = [
   { id: 'cart-1', product: products[0], quantity: 2 },
   { id: 'cart-2', product: products[2], quantity: 1 },
@@ -144,6 +144,7 @@ function calculateCartItemCount(carts) {
 }
 
 /**
+ * todo and review
  * 5. 檢查產品是否已在購物車中
  * @param {Array} carts - 購物車陣列
  * @param {string} productId - 產品 ID
@@ -151,9 +152,8 @@ function calculateCartItemCount(carts) {
  */
 function isProductInCart(carts, productId) {
   // 請實作此函式
-  const matchItem = carts.find(orderItem => orderItem.product.id === productId);
-  const isPresent = obj => obj != null && obj != undefined;
-  return isPresent(matchItem);
+  console.log(`call isProductInCart, product.id:${productId}`);
+  return carts.some(orderItem => orderItem.product.id === productId);
 }
 
 // ========================================
@@ -169,7 +169,31 @@ function isProductInCart(carts, productId) {
  * 如果產品已存在，合併數量；如果不存在，新增一筆
  */
 function addToCart(carts, product, quantity) {
-  // 請實作此函式
+  
+  if(isProductInCart(carts,product.id)){
+    // 產品已存在，合併數量
+    console.log('產品已存在，合併數量');
+    // 回傳新整理好的購物車陣列
+    return carts.map((cartItem) => {
+      if(cartItem.product.id === product.id){
+        // 回傳該筆產品物件（添加數量）
+        return {...cartItem, quantity: cartItem.quantity + quantity};
+      }else{
+        // 回傳該筆產品物件（原封不動）
+        return cartItem;
+      }
+    });
+  }else{
+    // 產品不存在，新增一筆購物車項目
+    // newCarts.push(product);
+    console.log('產品不存在，新增至購物車');
+    const newCartItem = {
+      id: `cart-${Date.now()}`,
+      product: product,
+      quantity: quantity
+    }
+    return [...carts, newCartItem];
+  }
 }
 
 /**
@@ -181,6 +205,19 @@ function addToCart(carts, product, quantity) {
  */
 function updateCartItemQuantity(carts, cartId, newQuantity) {
   // 請實作此函式
+  // 確認數量是否為正整數，<= 0 就移除該商品（filter）
+  if(newQuantity<=0){
+    return carts.filter(cartItem => cartItem.id !== cartId);
+  }
+  // 更新商品：依據此 cartId 更新數量（map）
+  return carts.map(cartItem => {
+    if(cartItem.id === cartId){
+      // 比對到就可以更新數量
+      return {...carts, quantity:newQuantity};
+    }
+    // 不需異動，直接回傳該項目
+    return cartItem;
+  })
 }
 
 /**
@@ -191,6 +228,7 @@ function updateCartItemQuantity(carts, cartId, newQuantity) {
  */
 function removeFromCart(carts, cartId) {
   // 請實作此函式
+  return carts.filter(cartItem => cartItem.id !== cartId);
 }
 
 /**
@@ -199,7 +237,20 @@ function removeFromCart(carts, cartId) {
  */
 function clearCart() {
   // 請實作此函式
+  return [];
 }
+
+
+/**
+ * 判斷此商品是否有重複
+ * @param {Array} carts - 購物車陣列
+ * @param {string} productId - 商品 ID
+ * @returns {boolean} - 回傳 true/false
+ */
+// function isProductInCart(carts, productId){
+//   // 檢查是否有任一元素符合條件
+//   return carts.some(item => item.product.Id === productId);
+// }
 
 // ========================================
 // 任務四：訂單統計模組 (挑戰)
