@@ -295,7 +295,7 @@ function generateOrderReport(orders) {
        return subtotal + (productItem.price * productItem.quantity);
     }, 0); // 訂單第二層單一商品價格初始 0 
     }, 0); // 訂單第一層全部商品價格初始 0 
-  let averageOrderValue = totalOrderValue / totalOrders;
+  let averageOrderValue = Math.round(totalOrderValue / totalOrders);
 
   statReport = { "totalOrders": totalOrders, "paidOrders": paidOrders, "unpaidOrders": uppaidOrders, "totalRevenue": totalRevenue, "averageOrderValue": averageOrderValue };
   console.log(`generateOrderReport(orders) : ${statReport}`);
