@@ -240,18 +240,6 @@ function clearCart() {
   return [];
 }
 
-
-/**
- * 判斷此商品是否有重複
- * @param {Array} carts - 購物車陣列
- * @param {string} productId - 商品 ID
- * @returns {boolean} - 回傳 true/false
- */
-// function isProductInCart(carts, productId){
-//   // 檢查是否有任一元素符合條件
-//   return carts.some(item => item.product.Id === productId);
-// }
-
 // ========================================
 // 任務四：訂單統計模組 (挑戰)
 // ========================================
@@ -263,6 +251,12 @@ function clearCart() {
  */
 function calculateTotalRevenue(orders) {
   // 請實作此函式
+  return filterOrdersByStatus(orders, true).reduce(
+    (total, curPaidItem) => { //訂單第一層：訂單資訊
+     return total + curPaidItem.products.reduce((subtotal,productItem) => { // 訂單第二層：商品資訊與購買數量
+       return subtotal + (productItem.price * productItem.quantity);
+    }, 0); // 訂單第二層單一商品價格初始 0 
+    }, 0); // 訂單第一層全部商品價格初始 0 
 }
 
 /**
@@ -273,6 +267,7 @@ function calculateTotalRevenue(orders) {
  */
 function filterOrdersByStatus(orders, isPaid) {
   // 請實作此函式
+  return orders.filter(orderItem => orderItem.paid === isPaid);
 }
 
 /**
@@ -289,6 +284,23 @@ function filterOrdersByStatus(orders, isPaid) {
  */
 function generateOrderReport(orders) {
   // 請實作此函式
+  let statReport = {};
+  let totalOrders = orders.length;
+  let paidOrders = filterOrdersByStatus(orders, true).length;
+  let uppaidOrders = filterOrdersByStatus(orders, false).length;
+  let totalRevenue = calculateTotalRevenue(orders);
+  let totalOrderValue = orders.reduce(
+    (total, curPaidItem) => { //訂單第一層：訂單資訊
+     return total + curPaidItem.products.reduce((subtotal,productItem) => { // 訂單第二層：商品資訊與購買數量
+       return subtotal + (productItem.price * productItem.quantity);
+    }, 0); // 訂單第二層單一商品價格初始 0 
+    }, 0); // 訂單第一層全部商品價格初始 0 
+  let averageOrderValue = totalOrderValue / totalOrders;
+
+  statReport = { "totalOrders": totalOrders, "paidOrders": paidOrders, "unpaidOrders": uppaidOrders, "totalRevenue": totalRevenue, "averageOrderValue": averageOrderValue };
+  console.log(`generateOrderReport(orders) : ${statReport}`);
+  return statReport;
+
 }
 
 /**
@@ -302,6 +314,21 @@ function generateOrderReport(orders) {
  */
 function groupOrdersByPayment(orders) {
   // 請實作此函式
+  const groupOrdersByPayChannel = {};
+  groupOrdersByPayChannel[`ATM`] = fileterPayChannelByOrders(orders, "ATM");
+  groupOrdersByPayChannel[`Credit Card`] = fileterPayChannelByOrders(orders, "Credit Card");
+  console.log(`groupOrdersByPayChannel：${groupOrdersByPayChannel}`);
+  return groupOrdersByPayChannel;
+}
+
+/**
+ * 4. 依付款方式統計
+ * @param {Array} orders - 訂單陣列
+ * @param {String} channelType - 付款渠道
+ * @returns {Array} - 回傳格式：
+ */
+function fileterPayChannelByOrders(orders, channelType){
+  return orders.filter(orderItem => orderItem.user.payment === channelType);
 }
 
 // ========================================
